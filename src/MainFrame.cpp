@@ -24,7 +24,8 @@ MainFrame::MainFrame(const wxString& title)
     mainPanel->SetSizer(mainSizer);
 
     // 1. Create input form area
-    wxStaticBoxSizer* formSizer = new wxStaticBoxSizer(wxVERTICAL, mainPanel, "Transaction Details");
+    wxString str1 = wxT("中文");
+    wxStaticBoxSizer* formSizer = new wxStaticBoxSizer(wxVERTICAL, mainPanel, str1);
     
     // Date row
     wxBoxSizer* dateRow = new wxBoxSizer(wxHORIZONTAL);

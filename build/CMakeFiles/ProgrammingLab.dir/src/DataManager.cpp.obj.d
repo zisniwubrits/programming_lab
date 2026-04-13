@@ -108,44 +108,4 @@ CMakeFiles/ProgrammingLab.dir/src/DataManager.cpp.obj: \
  D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/cstdio \
  D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/cerrno \
  D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/charconv.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/basic_string.tcc \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/fstream \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/istream \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/ios \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/exception \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/exception_ptr.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/cxxabi_init_exception.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/typeinfo \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/nested_exception.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/ios_base.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/ext/atomicity.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/x86_64-w64-mingw32/bits/gthr.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/x86_64-w64-mingw32/bits/gthr-default.h \
- D:/Program\ Files/mingw64/x86_64-w64-mingw32/include/sys/timeb.h \
- D:/Program\ Files/mingw64/x86_64-w64-mingw32/include/sec_api/sys/timeb_s.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/x86_64-w64-mingw32/bits/atomic_word.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/locale_classes.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/locale_classes.tcc \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/system_error \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/x86_64-w64-mingw32/bits/error_constants.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/stdexcept \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/streambuf \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/streambuf.tcc \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/basic_ios.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/locale_facets.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/cwctype \
- D:/Program\ Files/mingw64/x86_64-w64-mingw32/include/wctype.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/x86_64-w64-mingw32/bits/ctype_base.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/streambuf_iterator.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/x86_64-w64-mingw32/bits/ctype_inline.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/locale_facets.tcc \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/basic_ios.tcc \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/ostream \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/ostream.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/ostream.tcc \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/istream.tcc \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/codecvt.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/x86_64-w64-mingw32/bits/basic_file.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/x86_64-w64-mingw32/bits/c++io.h \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/fstream.tcc \
- D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/iostream
+ D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/bits/basic_string.tcc

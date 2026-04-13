@@ -716,8 +716,19 @@ CMakeFiles/ProgrammingLab.dir/src/MainFrame.cpp.obj: \
  E:/LIB/wxWidgets-3.3.2/include/wx/msw/filedlg.h \
  E:/LIB/wxWidgets-3.3.2/include/wx/mdi.h \
  E:/LIB/wxWidgets-3.3.2/include/wx/msw/mdi.h \
+ E:/LIB/wxWidgets-3.3.2/include/wx/datectrl.h \
+ E:/LIB/wxWidgets-3.3.2/include/wx/datetimectrl.h \
+ E:/LIB/wxWidgets-3.3.2/include/wx/msw/datetimectrl.h \
+ E:/LIB/wxWidgets-3.3.2/include/wx/msw/datectrl.h \
+ E:/LIB/wxWidgets-3.3.2/include/wx/listctrl.h \
+ E:/LIB/wxWidgets-3.3.2/include/wx/listbase.h \
+ E:/LIB/wxWidgets-3.3.2/include/wx/itemattr.h \
+ E:/LIB/wxWidgets-3.3.2/include/wx/systhemectrl.h \
+ E:/LIB/wxWidgets-3.3.2/include/wx/withimages.h \
+ E:/LIB/wxWidgets-3.3.2/include/wx/msw/listctrl.h \
  E:\WorkStation\C_project\programming_lab\src\DataManager.h \
  D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/c++/cstdint \
  D:/Program\ Files/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/stdint.h \
  D:/Program\ Files/mingw64/x86_64-w64-mingw32/include/stdint.h \
- E:/LIB/wxWidgets-3.3.2/include/wx/valnum.h
+ E:/LIB/wxWidgets-3.3.2/include/wx/clipbrd.h \
+ E:/LIB/wxWidgets-3.3.2/include/wx/msw/clipbrd.h

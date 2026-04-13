@@ -1,6 +1,5 @@
 CMakeFiles/ProgrammingLab.dir/src/main.cpp.obj: \
  E:\WorkStation\C_project\programming_lab\src\main.cpp \
- E:\WorkStation\C_project\programming_lab\src\ProgrammingLabApp.h \
  E:/LIB/wxWidgets-3.3.2/include/wx/wx.h \
  E:/LIB/wxWidgets-3.3.2/include/wx/defs.h \
  E:/LIB/wxWidgets-3.3.2/include/wx/platform.h \
@@ -715,4 +714,5 @@ CMakeFiles/ProgrammingLab.dir/src/main.cpp.obj: \
  E:/LIB/wxWidgets-3.3.2/include/wx/filedlg.h \
  E:/LIB/wxWidgets-3.3.2/include/wx/msw/filedlg.h \
  E:/LIB/wxWidgets-3.3.2/include/wx/mdi.h \
- E:/LIB/wxWidgets-3.3.2/include/wx/msw/mdi.h
+ E:/LIB/wxWidgets-3.3.2/include/wx/msw/mdi.h \
+ E:\WorkStation\C_project\programming_lab\src\ProgrammingLabApp.h

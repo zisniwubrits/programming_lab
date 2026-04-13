@@ -1,38 +1,37 @@
-// DataManager.cpp
+﻿// DataManager.cpp
 #include "DataManager.h"
-#include <fstream>
-#include <iostream>
+#include <cstdio>
 
 DataManager::DataManager(const std::string& filename) : m_filename(filename) {}
 
 bool DataManager::LoadData() {
-    std::ifstream file(m_filename);
-    if (!file.is_open()) return false;
+    FILE* file = fopen(m_filename.c_str(), "rb");
+    if (!file) return false;
 
     m_data.clear();
-    int64_t value;
-    while (file >> value) {
-        m_data.push_back(value);
+    Record record;
+    while (fread(&record, sizeof(Record), 1, file) == 1) {
+        m_data.push_back(record);
     }
-    file.close();
+    fclose(file);
     return true;
 }
 
 bool DataManager::SaveData() const {
-    std::ofstream file(m_filename);
-    if (!file.is_open()) return false;
+    FILE* file = fopen(m_filename.c_str(), "wb");
+    if (!file) return false;
 
-    for (const auto& item : m_data) {
-        file << item << '\n';
+    for (const auto& record : m_data) {
+        fwrite(&record, sizeof(Record), 1, file);
     }
-    file.close();
+    fclose(file);
     return true;
 }
 
-std::vector<int64_t>& DataManager::GetData() {
+std::vector<Record>& DataManager::GetData() {
     return m_data;
 }
 
-void DataManager::SetData(const std::vector<int64_t>& data) {
+void DataManager::SetData(const std::vector<Record>& data) {
     m_data = data;
 }

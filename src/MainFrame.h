@@ -1,8 +1,10 @@
-// MainFrame.h
+﻿// MainFrame.h
 #ifndef MAIN_FRAME_H
 #define MAIN_FRAME_H
 
 #include <wx/wx.h>
+#include <wx/datectrl.h>
+#include <wx/listctrl.h>
 #include "DataManager.h"
 
 class MainFrame : public wxFrame
@@ -11,26 +13,32 @@ public:
     MainFrame(const wxString& title);
 
 private:
-    // 数据模型
-    DataManager m_dataManager; // ← 新增后台数据管理
+    // Data model
+    DataManager m_dataManager;
 
-    // UI 控件
-    wxTextCtrl* m_inputTextCtrl;
-    wxListBox* m_listBox;
+    // Input controls
+    wxDatePickerCtrl* m_datePicker;
+    wxTextCtrl* m_nameTextCtrl;
+    wxChoice* m_typeChoice;
+    wxTextCtrl* m_amountTextCtrl;
+    wxTextCtrl* m_noteTextCtrl;
+
+    // Action buttons
     wxButton* m_addButton;
-    wxButton* m_deleteButton;
     wxButton* m_updateButton;
+    wxButton* m_deleteButton;
 
-    // 事件处理函数
-    void OnAdd(wxCommandEvent& event);
-    void OnDelete(wxCommandEvent& event);
-    void OnUpdate(wxCommandEvent& event);
-    void OnItemSelected(wxCommandEvent& event);
+    // Data display control
+    wxListCtrl* m_listCtrl;
 
-    // 辅助函数
-    void RefreshListBox();
+    // Event handlers
+    void OnAddRecord(wxCommandEvent& event);
+    void OnUpdateRecord(wxCommandEvent& event);
+    void OnDeleteRecord(wxCommandEvent& event);
+    void OnItemSelected(wxListEvent& event);
 
-    // 声明事件表
+    void RefreshListCtrl();
+
     wxDECLARE_EVENT_TABLE();
 };
 

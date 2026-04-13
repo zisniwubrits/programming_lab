@@ -1,6 +1,8 @@
-// main.cpp
-// 程序入口点，使用 wxWidgets 宏
+﻿// main.cpp
+#include <wx/wx.h>
 #include "ProgrammingLabApp.h"
 
-// 实现应用程序类
-wxIMPLEMENT_APP(ProgrammingLabApp);
+int main(int argc, char* argv[]) {
+    ProgrammingLabApp app;
+    return wxEntry(argc, argv);
+}

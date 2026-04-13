@@ -1,4 +1,4 @@
-// ProgrammingLabApp.cpp
+﻿// ProgrammingLabApp.cpp
 #include "ProgrammingLabApp.h"
 #include "MainFrame.h"
 

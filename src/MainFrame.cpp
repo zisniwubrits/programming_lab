@@ -24,19 +24,18 @@ MainFrame::MainFrame(const wxString& title)
     mainPanel->SetSizer(mainSizer);
 
     // 1. Create input form area
-    wxString str1 = wxT("中文");
-    wxStaticBoxSizer* formSizer = new wxStaticBoxSizer(wxVERTICAL, mainPanel, str1);
+    wxStaticBoxSizer* formSizer = new wxStaticBoxSizer(wxVERTICAL, mainPanel, wxT("账目详情"));
     
     // Date row
     wxBoxSizer* dateRow = new wxBoxSizer(wxHORIZONTAL);
-    dateRow->Add(new wxStaticText(mainPanel, wxID_ANY, "Date:"), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
+    dateRow->Add(new wxStaticText(mainPanel, wxID_ANY, wxT("日期:")), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
     m_datePicker = new wxDatePickerCtrl(mainPanel, wxID_ANY);
     dateRow->Add(m_datePicker, 1);
     formSizer->Add(dateRow, 0, wxEXPAND | wxALL, 5);
 
     // Project name row
     wxBoxSizer* nameRow = new wxBoxSizer(wxHORIZONTAL);
-    nameRow->Add(new wxStaticText(mainPanel, wxID_ANY, "Item:"), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
+    nameRow->Add(new wxStaticText(mainPanel, wxID_ANY, wxT("项目:")), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
     m_nameTextCtrl = new wxTextCtrl(mainPanel, wxID_ANY);
     nameRow->Add(m_nameTextCtrl, 1);
     formSizer->Add(nameRow, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
@@ -44,21 +43,21 @@ MainFrame::MainFrame(const wxString& title)
     // Type and amount row
     wxBoxSizer* typeAmountRow = new wxBoxSizer(wxHORIZONTAL);
     // Type
-    typeAmountRow->Add(new wxStaticText(mainPanel, wxID_ANY, "Type:"), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
+    typeAmountRow->Add(new wxStaticText(mainPanel, wxID_ANY, wxT("类型:")), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
     m_typeChoice = new wxChoice(mainPanel, wxID_ANY);
-    m_typeChoice->Append("Income");
-    m_typeChoice->Append("Expense");
+    m_typeChoice->Append(wxT("收入"));
+    m_typeChoice->Append(wxT("支出"));
     m_typeChoice->SetSelection(1); // Default to "Expense"
     typeAmountRow->Add(m_typeChoice, 0, wxRIGHT, 10);
     // Amount
-    typeAmountRow->Add(new wxStaticText(mainPanel, wxID_ANY, "Amount ($):"), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
+    typeAmountRow->Add(new wxStaticText(mainPanel, wxID_ANY, wxT("金额(元):")), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
     m_amountTextCtrl = new wxTextCtrl(mainPanel, wxID_ANY, "", wxDefaultPosition, wxSize(100, -1));
     typeAmountRow->Add(m_amountTextCtrl, 0);
     formSizer->Add(typeAmountRow, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
 
     // Note row
     wxBoxSizer* noteRow = new wxBoxSizer(wxHORIZONTAL);
-    noteRow->Add(new wxStaticText(mainPanel, wxID_ANY, "Note:"), 0, wxALIGN_TOP | wxRIGHT, 5);
+    noteRow->Add(new wxStaticText(mainPanel, wxID_ANY, wxT("备注")), 0, wxALIGN_TOP | wxRIGHT, 5);
     m_noteTextCtrl = new wxTextCtrl(mainPanel, wxID_ANY, "", wxDefaultPosition, wxSize(-1, 60), wxTE_MULTILINE);
     noteRow->Add(m_noteTextCtrl, 1, wxEXPAND);
     formSizer->Add(noteRow, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
@@ -67,9 +66,9 @@ MainFrame::MainFrame(const wxString& title)
 
     // 2. Create action buttons area
     wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-    m_addButton = new wxButton(mainPanel, wxID_ADD, "Add");
-    m_updateButton = new wxButton(mainPanel, wxID_REPLACE, "Update");
-    m_deleteButton = new wxButton(mainPanel, wxID_DELETE, "Delete");
+    m_addButton = new wxButton(mainPanel, wxID_ADD, wxT("添加"));
+    m_updateButton = new wxButton(mainPanel, wxID_REPLACE, wxT("修改"));
+    m_deleteButton = new wxButton(mainPanel, wxID_DELETE, wxT("删除"));
     buttonSizer->Add(m_addButton, 0, wxRIGHT, 5);
     buttonSizer->Add(m_updateButton, 0, wxRIGHT, 5);
     buttonSizer->Add(m_deleteButton, 0);
@@ -79,11 +78,11 @@ MainFrame::MainFrame(const wxString& title)
     m_listCtrl = new wxListCtrl(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL);
     // Add columns
     m_listCtrl->AppendColumn("ID", wxLIST_FORMAT_LEFT, 40);
-    m_listCtrl->AppendColumn("Date", wxLIST_FORMAT_LEFT, 100);
-    m_listCtrl->AppendColumn("Item", wxLIST_FORMAT_LEFT, 150);
-    m_listCtrl->AppendColumn("Type", wxLIST_FORMAT_LEFT, 60);
-    m_listCtrl->AppendColumn("Amount", wxLIST_FORMAT_RIGHT, 100);
-    m_listCtrl->AppendColumn("Note", wxLIST_FORMAT_LEFT, 200);
+    m_listCtrl->AppendColumn(wxT("日期"), wxLIST_FORMAT_LEFT, 100);
+    m_listCtrl->AppendColumn(wxT("项目"), wxLIST_FORMAT_LEFT, 150);
+    m_listCtrl->AppendColumn(wxT("类型"), wxLIST_FORMAT_LEFT, 60);
+    m_listCtrl->AppendColumn(wxT("金额"), wxLIST_FORMAT_RIGHT, 100);
+    m_listCtrl->AppendColumn(wxT("备注"), wxLIST_FORMAT_LEFT, 200);
     mainSizer->Add(m_listCtrl, 1, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 10);
 
     // Initial refresh
@@ -118,7 +117,7 @@ void MainFrame::OnAddRecord(wxCommandEvent& event) {
     // Parse amount, convert to 0.001 unit
     double amountDbl;
     if (!m_amountTextCtrl->GetValue().ToDouble(&amountDbl) || amountDbl <= 0) {
-        wxMessageBox("Please enter a valid amount!", "Error", wxOK | wxICON_ERROR);
+        wxMessageBox(wxT("请输入有效的金额！"), wxT("错误"), wxOK | wxICON_ERROR);
         return;
     }
     newRecord.amount = static_cast<long long>(amountDbl * 1000 + 0.5);
@@ -151,7 +150,7 @@ void MainFrame::OnAddRecord(wxCommandEvent& event) {
 void MainFrame::OnUpdateRecord(wxCommandEvent& event) {
     long itemIndex = m_listCtrl->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
     if (itemIndex == -1) {
-        wxMessageBox("Please select a record in the list to update.", "Hint", wxOK | wxICON_INFORMATION);
+        wxMessageBox(wxT("确定要删除这条记录吗？"), wxT("确认"), wxOK | wxICON_INFORMATION);
         return;
     }
 
@@ -179,7 +178,7 @@ void MainFrame::OnUpdateRecord(wxCommandEvent& event) {
     
     double amountDbl;
     if (!m_amountTextCtrl->GetValue().ToDouble(&amountDbl) || amountDbl <= 0) {
-        wxMessageBox("Please enter a valid amount!", "Error", wxOK | wxICON_ERROR);
+        wxMessageBox(wxT("请输入有效的金额！"), wxT("错误"), wxOK | wxICON_ERROR);
         return;
     }
     it->amount = static_cast<long long>(amountDbl * 1000 + 0.5);
@@ -197,11 +196,11 @@ void MainFrame::OnUpdateRecord(wxCommandEvent& event) {
 void MainFrame::OnDeleteRecord(wxCommandEvent& event) {
     long itemIndex = m_listCtrl->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
     if (itemIndex == -1) {
-        wxMessageBox("Please select a record in the list to delete.", "Hint", wxOK | wxICON_INFORMATION);
+        wxMessageBox(wxT("请先在列表中选择一条记录进行修改。"), wxT("确认"), wxOK | wxICON_INFORMATION);
         return;
     }
 
-    if (wxMessageBox("Are you sure you want to delete this record?", "Confirm", wxYES_NO | wxICON_QUESTION) != wxYES) {
+    if (wxMessageBox(wxT("确定要删除这条记录吗？"), wxT("确认"), wxYES_NO | wxICON_QUESTION) != wxYES) {
         return;
     }
 

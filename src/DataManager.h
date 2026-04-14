@@ -10,7 +10,7 @@ struct Record {
     int id;                     // Serial number (auto-increment)
     int year, month, day;       // Date
     char name[31];              // Item name (≤30 chars)
-    char type[6];               // Type: "Income" or "Expense" (5 chars + '\0')
+    char type[8];               // Type: "Income" or "Expense" (5 chars + '\0')
     long long amount;           // Amount (positive/negative for income/expense, unit: 0.001)
     char note[51];              // Note (≤50 chars)
 };

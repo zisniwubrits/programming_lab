@@ -111,8 +111,8 @@ void MainFrame::OnAddRecord(wxCommandEvent& event) {
     
     wxString typeStr = m_typeChoice->GetStringSelection();
     auto utf8Type = typeStr.ToUTF8();
-    std::strncpy(newRecord.type, utf8Type.data(), 5);
-    newRecord.type[5] = '\0';
+    std::strncpy(newRecord.type, utf8Type.data(), 6);       // 复制6字节
+    newRecord.type[6] = '\0';                               // 确保null结尾
     
     // Parse amount, convert to 0.001 unit
     double amountDbl;
@@ -150,7 +150,8 @@ void MainFrame::OnAddRecord(wxCommandEvent& event) {
 void MainFrame::OnUpdateRecord(wxCommandEvent& event) {
     long itemIndex = m_listCtrl->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
     if (itemIndex == -1) {
-        wxMessageBox(wxT("确定要删除这条记录吗？"), wxT("确认"), wxOK | wxICON_INFORMATION);
+        // 修正：正确的提示信息
+        wxMessageBox(wxT("请先在列表中选择一条记录进行修改。"), wxT("提示"), wxOK | wxICON_INFORMATION);
         return;
     }
 
@@ -173,8 +174,8 @@ void MainFrame::OnUpdateRecord(wxCommandEvent& event) {
     
     wxString typeStr = m_typeChoice->GetStringSelection();
     auto utf8Type = typeStr.ToUTF8();
-    std::strncpy(it->type, utf8Type.data(), 5);
-    it->type[5] = '\0';
+    std::strncpy(it->type, utf8Type.data(), 6);
+    it->type[6] = '\0';
     
     double amountDbl;
     if (!m_amountTextCtrl->GetValue().ToDouble(&amountDbl) || amountDbl <= 0) {
@@ -196,7 +197,8 @@ void MainFrame::OnUpdateRecord(wxCommandEvent& event) {
 void MainFrame::OnDeleteRecord(wxCommandEvent& event) {
     long itemIndex = m_listCtrl->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
     if (itemIndex == -1) {
-        wxMessageBox(wxT("请先在列表中选择一条记录进行修改。"), wxT("确认"), wxOK | wxICON_INFORMATION);
+        // 修正：正确的提示信息
+        wxMessageBox(wxT("请先在列表中选择一条记录进行删除。"), wxT("提示"), wxOK | wxICON_INFORMATION);
         return;
     }
 

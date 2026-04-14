@@ -1,3 +1,0 @@
-E:/WorkStation/C_project/programming_lab/build/CMakeFiles/ProgrammingLab.dir
-E:/WorkStation/C_project/programming_lab/build/CMakeFiles/edit_cache.dir
-E:/WorkStation/C_project/programming_lab/build/CMakeFiles/rebuild_cache.dir

@@ -21,7 +21,9 @@ enum {
     ID_SORT_DATE_DESC,
     ID_SORT_NAME_DESC,
     ID_SORT_TYPE_DESC,
-    ID_SORT_AMOUNT_DESC
+    ID_SORT_AMOUNT_DESC,
+
+    ID_VIEW_DETAILS
 };
 
 wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
@@ -46,6 +48,8 @@ wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
     EVT_MENU(ID_SORT_NAME_DESC, MainFrame::OnSortByNameDesc)
     EVT_MENU(ID_SORT_TYPE_DESC, MainFrame::OnSortByTypeDesc)
     EVT_MENU(ID_SORT_AMOUNT_DESC, MainFrame::OnSortByAmountDesc)
+
+    EVT_BUTTON(ID_VIEW_DETAILS, MainFrame::OnViewDetail)
 wxEND_EVENT_TABLE()
 
 MainFrame::MainFrame(const wxString& title)
@@ -101,58 +105,19 @@ MainFrame::MainFrame(const wxString& title)
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     mainPanel->SetSizer(mainSizer);
 
-    // 1. Create input form area
-    wxStaticBoxSizer* formSizer = new wxStaticBoxSizer(wxVERTICAL, mainPanel, wxT("账目详情"));
-    
-    // Date row
-    wxBoxSizer* dateRow = new wxBoxSizer(wxHORIZONTAL);
-    dateRow->Add(new wxStaticText(mainPanel, wxID_ANY, wxT("日期:")), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
-    m_datePicker = new wxDatePickerCtrl(mainPanel, wxID_ANY);
-    dateRow->Add(m_datePicker, 1);
-    formSizer->Add(dateRow, 0, wxEXPAND | wxALL, 5);
-
-    // Project name row
-    wxBoxSizer* nameRow = new wxBoxSizer(wxHORIZONTAL);
-    nameRow->Add(new wxStaticText(mainPanel, wxID_ANY, wxT("项目:")), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
-    m_nameTextCtrl = new wxTextCtrl(mainPanel, wxID_ANY);
-    nameRow->Add(m_nameTextCtrl, 1);
-    formSizer->Add(nameRow, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
-
-    // Type and amount row
-    wxBoxSizer* typeAmountRow = new wxBoxSizer(wxHORIZONTAL);
-    // Type
-    typeAmountRow->Add(new wxStaticText(mainPanel, wxID_ANY, wxT("类型:")), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
-    m_typeChoice = new wxChoice(mainPanel, wxID_ANY);
-    m_typeChoice->Append(wxT("收入"));
-    m_typeChoice->Append(wxT("支出"));
-    m_typeChoice->SetSelection(1); // Default to "Expense"
-    typeAmountRow->Add(m_typeChoice, 0, wxRIGHT, 10);
-    // Amount
-    typeAmountRow->Add(new wxStaticText(mainPanel, wxID_ANY, wxT("金额(元):")), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
-    m_amountTextCtrl = new wxTextCtrl(mainPanel, wxID_ANY, "", wxDefaultPosition, wxSize(100, -1));
-    typeAmountRow->Add(m_amountTextCtrl, 0);
-    formSizer->Add(typeAmountRow, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
-
-    // Note row
-    wxBoxSizer* noteRow = new wxBoxSizer(wxHORIZONTAL);
-    noteRow->Add(new wxStaticText(mainPanel, wxID_ANY, wxT("备注")), 0, wxALIGN_TOP | wxRIGHT, 5);
-    m_noteTextCtrl = new wxTextCtrl(mainPanel, wxID_ANY, "", wxDefaultPosition, wxSize(-1, 60), wxTE_MULTILINE);
-    noteRow->Add(m_noteTextCtrl, 1, wxEXPAND);
-    formSizer->Add(noteRow, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
-
-    mainSizer->Add(formSizer, 0, wxEXPAND | wxALL, 10);
-
-    // 2. Create action buttons area
+    // 1. Create action buttons area
     wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
     m_addButton = new wxButton(mainPanel, wxID_ADD, wxT("添加"));
     m_updateButton = new wxButton(mainPanel, wxID_REPLACE, wxT("修改"));
     m_deleteButton = new wxButton(mainPanel, wxID_DELETE, wxT("删除"));
+    wxButton* viewButton = new wxButton(mainPanel, ID_VIEW_DETAILS, wxT("查看详情"));
     buttonSizer->Add(m_addButton, 0, wxRIGHT, 5);
     buttonSizer->Add(m_updateButton, 0, wxRIGHT, 5);
-    buttonSizer->Add(m_deleteButton, 0);
-    mainSizer->Add(buttonSizer, 0, wxALIGN_CENTER | wxBOTTOM, 10);
+    buttonSizer->Add(m_deleteButton, 0, wxRIGHT, 5);
+    buttonSizer->Add(viewButton, 0);
+    mainSizer->Add(buttonSizer, 0, wxALIGN_CENTER | wxALL, 10);
 
-    // 3. Create data display area
+    // 2. Create data display area
     m_listCtrl = new wxListCtrl(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL);
     // Add columns
     m_listCtrl->AppendColumn("ID", wxLIST_FORMAT_LEFT, 40);
@@ -173,34 +138,104 @@ MainFrame::MainFrame(const wxString& title)
 // --- Original Event Handlers ---
 
 void MainFrame::OnAddRecord(wxCommandEvent& event) {
+    // Create a dialog for adding a new record
+    wxDialog addDialog(this, wxID_ANY, wxT("添加新记录"), wxDefaultPosition, wxSize(400, 300));
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    addDialog.SetSizer(mainSizer);
+
+    // Input controls inside the dialog
+    wxTextCtrl* dateTextCtrl; // Replaced with text control
+    wxTextCtrl* nameTextCtrl;
+    wxChoice* typeChoice;
+    wxTextCtrl* amountTextCtrl;
+    wxTextCtrl* noteTextCtrl;
+
+    // Date row
+    wxBoxSizer* dateRow = new wxBoxSizer(wxHORIZONTAL);
+    dateRow->Add(new wxStaticText(&addDialog, wxID_ANY, wxT("日期:")), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
+    dateTextCtrl = new wxTextCtrl(&addDialog, wxID_ANY, "", wxDefaultPosition, wxSize(100, -1));
+    dateTextCtrl->SetHint("YYYY-MM-DD"); // Add format hint
+    dateRow->Add(dateTextCtrl, 1);
+    mainSizer->Add(dateRow, 0, wxEXPAND | wxALL, 5);
+
+    // Project name row
+    wxBoxSizer* nameRow = new wxBoxSizer(wxHORIZONTAL);
+    nameRow->Add(new wxStaticText(&addDialog, wxID_ANY, wxT("项目:")), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
+    nameTextCtrl = new wxTextCtrl(&addDialog, wxID_ANY);
+    nameRow->Add(nameTextCtrl, 1);
+    mainSizer->Add(nameRow, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
+
+    // Type and amount row
+    wxBoxSizer* typeAmountRow = new wxBoxSizer(wxHORIZONTAL);
+    // Type
+    typeAmountRow->Add(new wxStaticText(&addDialog, wxID_ANY, wxT("类型:")), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
+    typeChoice = new wxChoice(&addDialog, wxID_ANY);
+    typeChoice->Append(wxT("收入"));
+    typeChoice->Append(wxT("支出"));
+    typeChoice->SetSelection(1); // Default to "Expense"
+    typeAmountRow->Add(typeChoice, 0, wxRIGHT, 10);
+    // Amount
+    typeAmountRow->Add(new wxStaticText(&addDialog, wxID_ANY, wxT("金额(元):")), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
+    amountTextCtrl = new wxTextCtrl(&addDialog, wxID_ANY, "", wxDefaultPosition, wxSize(100, -1));
+    typeAmountRow->Add(amountTextCtrl, 0);
+    mainSizer->Add(typeAmountRow, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
+
+    // Note row
+    wxBoxSizer* noteRow = new wxBoxSizer(wxHORIZONTAL);
+    noteRow->Add(new wxStaticText(&addDialog, wxID_ANY, wxT("备注")), 0, wxALIGN_TOP | wxRIGHT, 5);
+    noteTextCtrl = new wxTextCtrl(&addDialog, wxID_ANY, "", wxDefaultPosition, wxSize(-1, 60), wxTE_MULTILINE);
+    noteRow->Add(noteTextCtrl, 1, wxEXPAND);
+    mainSizer->Add(noteRow, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
+
+    // --- Refactored Button Placement (Bottom Right) ---
+    wxStdDialogButtonSizer* buttonSizer = new wxStdDialogButtonSizer();
+    wxButton* okButton = new wxButton(&addDialog, wxID_OK, wxT("确定"));
+    wxButton* cancelButton = new wxButton(&addDialog, wxID_CANCEL, wxT("取消"));
+    buttonSizer->AddButton(okButton);
+    buttonSizer->AddButton(cancelButton);
+    buttonSizer->Realize();
+
+    // Add the button sizer to the main sizer with right alignment
+    mainSizer->Add(buttonSizer, 0, wxALIGN_RIGHT | wxALL, 10);
+    // --- End of Button Refactor ---
+
+    if (addDialog.ShowModal() != wxID_OK) {
+        return; // User cancelled
+    }
+
     Record newRecord;
     
-    // Get input data
-    wxDateTime date = m_datePicker->GetValue();
+    // Get input data from dialog controls
+    wxString dateStr = dateTextCtrl->GetValue();
+    wxDateTime date;
+    if (!date.ParseFormat(dateStr, "%Y-%m-%d") || !date.IsValid()) {
+        wxMessageBox(wxT("日期格式错误！请使用 YYYY-MM-DD 格式。"), wxT("错误"), wxOK | wxICON_ERROR);
+        return;
+    }
     newRecord.year = date.GetYear();
     newRecord.month = date.GetMonth() + 1;
     newRecord.day = date.GetDay();
     
     // Convert wxString to UTF-8 for char array
-    wxString nameStr = m_nameTextCtrl->GetValue();
+    wxString nameStr = nameTextCtrl->GetValue();
     auto utf8Name = nameStr.ToUTF8();
     std::strncpy(newRecord.name, utf8Name.data(), 30);
     newRecord.name[30] = '\0';
     
-    wxString typeStr = m_typeChoice->GetStringSelection();
+    wxString typeStr = typeChoice->GetStringSelection();
     auto utf8Type = typeStr.ToUTF8();
-    std::strncpy(newRecord.type, utf8Type.data(), 6);       // 复制6字节
-    newRecord.type[6] = '\0';                               // 确保null结尾
+    std::strncpy(newRecord.type, utf8Type.data(), 6);       // Copy 6 bytes
+    newRecord.type[6] = '\0';                               // Ensure null termination
     
     // Parse amount, convert to 0.001 unit
     double amountDbl;
-    if (!m_amountTextCtrl->GetValue().ToDouble(&amountDbl) || amountDbl <= 0) {
+    if (!amountTextCtrl->GetValue().ToDouble(&amountDbl) || amountDbl <= 0) {
         wxMessageBox(wxT("请输入有效的金额！"), wxT("错误"), wxOK | wxICON_ERROR);
         return;
     }
     newRecord.amount = static_cast<long long>(amountDbl * 1000 + 0.5);
 
-    wxString noteStr = m_noteTextCtrl->GetValue();
+    wxString noteStr = noteTextCtrl->GetValue();
     auto utf8Note = noteStr.ToUTF8();
     std::strncpy(newRecord.note, utf8Note.data(), 50);
     newRecord.note[50] = '\0';
@@ -220,53 +255,129 @@ void MainFrame::OnAddRecord(wxCommandEvent& event) {
     // Update current records and refresh UI
     m_currentRecords = m_dataManager.GetData();
     RefreshListCtrl();
-    m_nameTextCtrl->Clear();
-    m_amountTextCtrl->Clear();
-    m_noteTextCtrl->Clear();
-    m_nameTextCtrl->SetFocus();
 }
 
 void MainFrame::OnUpdateRecord(wxCommandEvent& event) {
     long itemIndex = m_listCtrl->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
     if (itemIndex == -1) {
-        // 修正：正确的提示信息
+        // Fixed: Correct prompt message
         wxMessageBox(wxT("请先在列表中选择一条记录进行修改。"), wxT("提示"), wxOK | wxICON_INFORMATION);
         return;
     }
 
     // Get record to update
-    auto& data = m_dataManager.GetData();
+    const auto& originalData = m_dataManager.GetData();
     int recordId = wxAtoi(m_listCtrl->GetItemText(itemIndex, 0));
-    auto it = std::find_if(data.begin(), data.end(), [recordId](const Record& r) { return r.id == recordId; });
-    if (it == data.end()) return;
+    auto it = std::find_if(originalData.begin(), originalData.end(), [recordId](const Record& r) { return r.id == recordId; });
+    if (it == originalData.end()) return;
 
-    // Update record data
-    wxDateTime date = m_datePicker->GetValue();
-    it->year = date.GetYear();
-    it->month = date.GetMonth() + 1;
-    it->day = date.GetDay();
+    // Create a dialog for updating the record, pre-filled with existing data
+    wxDialog updateDialog(this, wxID_ANY, wxT("修改记录"), wxDefaultPosition, wxSize(400, 300));
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    updateDialog.SetSizer(mainSizer);
+
+    // Input controls inside the dialog
+    wxTextCtrl* dateTextCtrl; // Replaced with text control
+    wxTextCtrl* nameTextCtrl;
+    wxChoice* typeChoice;
+    wxTextCtrl* amountTextCtrl;
+    wxTextCtrl* noteTextCtrl;
+
+    // Date row
+    wxBoxSizer* dateRow = new wxBoxSizer(wxHORIZONTAL);
+    dateRow->Add(new wxStaticText(&updateDialog, wxID_ANY, wxT("日期:")), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
+    dateTextCtrl = new wxTextCtrl(&updateDialog, wxID_ANY, "", wxDefaultPosition, wxSize(100, -1));
+    // --- Fixed Date Display Bug: Ensure two-digit month/day ---
+    dateTextCtrl->SetValue(wxString::Format("%04d-%02d-%02d", it->year, it->month, it->day)); // Fill with old data
+    // --- End of Fix ---
+    dateTextCtrl->SetHint("YYYY-MM-DD"); // Add format hint
+    dateRow->Add(dateTextCtrl, 1);
+    mainSizer->Add(dateRow, 0, wxEXPAND | wxALL, 5);
+
+    // Project name row
+    wxBoxSizer* nameRow = new wxBoxSizer(wxHORIZONTAL);
+    nameRow->Add(new wxStaticText(&updateDialog, wxID_ANY, wxT("项目:")), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
+    nameTextCtrl = new wxTextCtrl(&updateDialog, wxID_ANY);
+    nameTextCtrl->SetValue(wxString::FromUTF8(it->name));
+    nameRow->Add(nameTextCtrl, 1);
+    mainSizer->Add(nameRow, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
+
+    // Type and amount row
+    wxBoxSizer* typeAmountRow = new wxBoxSizer(wxHORIZONTAL);
+    // Type
+    typeAmountRow->Add(new wxStaticText(&updateDialog, wxID_ANY, wxT("类型:")), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
+    typeChoice = new wxChoice(&updateDialog, wxID_ANY);
+    typeChoice->Append(wxT("收入"));
+    typeChoice->Append(wxT("支出"));
+    typeChoice->SetStringSelection(wxString::FromUTF8(it->type));
+    typeAmountRow->Add(typeChoice, 0, wxRIGHT, 10);
+    // Amount
+    typeAmountRow->Add(new wxStaticText(&updateDialog, wxID_ANY, wxT("金额(元):")), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
+    double amountToShow = static_cast<double>(it->amount) / 1000.0;
+    amountTextCtrl = new wxTextCtrl(&updateDialog, wxID_ANY, wxString::Format("%.2f", amountToShow), wxDefaultPosition, wxSize(100, -1));
+    typeAmountRow->Add(amountTextCtrl, 0);
+    mainSizer->Add(typeAmountRow, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
+
+    // Note row
+    wxBoxSizer* noteRow = new wxBoxSizer(wxHORIZONTAL);
+    noteRow->Add(new wxStaticText(&updateDialog, wxID_ANY, wxT("备注")), 0, wxALIGN_TOP | wxRIGHT, 5);
+    noteTextCtrl = new wxTextCtrl(&updateDialog, wxID_ANY, wxString::FromUTF8(it->note), wxDefaultPosition, wxSize(-1, 60), wxTE_MULTILINE);
+    noteRow->Add(noteTextCtrl, 1, wxEXPAND);
+    mainSizer->Add(noteRow, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
+
+    // --- Refactored Button Placement (Bottom Right) ---
+    wxStdDialogButtonSizer* buttonSizer = new wxStdDialogButtonSizer();
+    wxButton* okButton = new wxButton(&updateDialog, wxID_OK, wxT("确定"));
+    wxButton* cancelButton = new wxButton(&updateDialog, wxID_CANCEL, wxT("取消"));
+    buttonSizer->AddButton(okButton);
+    buttonSizer->AddButton(cancelButton);
+    buttonSizer->Realize();
+
+    // Add the button sizer to the main sizer with right alignment
+    mainSizer->Add(buttonSizer, 0, wxALIGN_RIGHT | wxALL, 10);
+    // --- End of Button Refactor ---
+
+    if (updateDialog.ShowModal() != wxID_OK) {
+        return; // User cancelled
+    }
+
+    // Now update the actual record in the data manager
+    auto& data = m_dataManager.GetData();
+    auto updateIt = std::find_if(data.begin(), data.end(), [recordId](const Record& r) { return r.id == recordId; });
+    if (updateIt == data.end()) return;
+
+    // Update record data from dialog controls
+    wxString dateStr = dateTextCtrl->GetValue();
+    wxDateTime date;
+    if (!date.ParseFormat(dateStr, "%Y-%m-%d") || !date.IsValid()) {
+        wxMessageBox(wxT("日期格式错误！请使用 YYYY-MM-DD 格式。"), wxT("错误"), wxOK | wxICON_ERROR);
+        return;
+    }
+    updateIt->year = date.GetYear();
+    updateIt->month = date.GetMonth() + 1;
+    updateIt->day = date.GetDay();
     
-    wxString nameStr = m_nameTextCtrl->GetValue();
+    wxString nameStr = nameTextCtrl->GetValue();
     auto utf8Name = nameStr.ToUTF8();
-    std::strncpy(it->name, utf8Name.data(), 30);
-    it->name[30] = '\0';
+    std::strncpy(updateIt->name, utf8Name.data(), 30);
+    updateIt->name[30] = '\0';
     
-    wxString typeStr = m_typeChoice->GetStringSelection();
+    wxString typeStr = typeChoice->GetStringSelection();
     auto utf8Type = typeStr.ToUTF8();
-    std::strncpy(it->type, utf8Type.data(), 6);
-    it->type[6] = '\0';
+    std::strncpy(updateIt->type, utf8Type.data(), 6);
+    updateIt->type[6] = '\0';
     
     double amountDbl;
-    if (!m_amountTextCtrl->GetValue().ToDouble(&amountDbl) || amountDbl <= 0) {
+    if (!amountTextCtrl->GetValue().ToDouble(&amountDbl) || amountDbl <= 0) {
         wxMessageBox(wxT("请输入有效的金额！"), wxT("错误"), wxOK | wxICON_ERROR);
         return;
     }
-    it->amount = static_cast<long long>(amountDbl * 1000 + 0.5);
+    updateIt->amount = static_cast<long long>(amountDbl * 1000 + 0.5);
 
-    wxString noteStr = m_noteTextCtrl->GetValue();
+    wxString noteStr = noteTextCtrl->GetValue();
     auto utf8Note = noteStr.ToUTF8();
-    std::strncpy(it->note, utf8Note.data(), 50);
-    it->note[50] = '\0';
+    std::strncpy(updateIt->note, utf8Note.data(), 50);
+    updateIt->note[50] = '\0';
 
     // Save and refresh
     m_dataManager.SaveData();
@@ -297,28 +408,14 @@ void MainFrame::OnDeleteRecord(wxCommandEvent& event) {
 }
 
 void MainFrame::OnItemSelected(wxListEvent& event) {
-    long itemIndex = event.GetIndex();
-    if (itemIndex == -1) return;
-
-    // Get selected record
-    int recordId = wxAtoi(m_listCtrl->GetItemText(itemIndex, 0));
-    const auto& data = m_dataManager.GetData();
-    auto it = std::find_if(data.begin(), data.end(), [recordId](const Record& r) { return r.id == recordId; });
-    if (it == data.end()) return;
-
-    // Fill record data into input fields
-    m_datePicker->SetValue(wxDateTime(it->day, wxDateTime::Month(it->month - 1), it->year));
-    m_nameTextCtrl->SetValue(wxString::FromUTF8(it->name));
-    m_typeChoice->SetStringSelection(wxString::FromUTF8(it->type));
-    double amountToShow = static_cast<double>(it->amount) / 1000.0;
-    m_amountTextCtrl->SetValue(wxString::Format("%.2f", amountToShow));
-    m_noteTextCtrl->SetValue(wxString::FromUTF8(it->note));
+    // This handler is kept for potential future use or if other logic depends on selection.
+    // The form filling logic has been moved into the OnViewDetail dialog.
 }
 
 // --- Menu Event Handlers ---
 
 void MainFrame::OnStatistics(wxCommandEvent& event) {
-    auto stats = AlgorithmUtils::calculateStatistics(m_dataManager.GetData());
+    auto stats = AlgorithmUtils::calculateStatistics(m_currentRecords);
     wxString message = wxString::Format(
         wxT("统计信息:\n\n")
         wxT("总收入: %.2f 元\n")
@@ -549,11 +646,55 @@ void MainFrame::RefreshListCtrl() {
         double amountToShow = static_cast<double>(rec.amount) / 1000.0;
         wxString amountStr = wxString::Format("%.2f", amountToShow);
         // Add negative sign for expenses
-        if (std::string(rec.type) == "Expense") {
-            amountStr = "-" + amountStr;
+        if (std::string(rec.type) == "支出") {
+            amountStr = "" + amountStr;
         }
         m_listCtrl->SetItem(index, 4, amountStr);
         
         m_listCtrl->SetItem(index, 5, wxString::FromUTF8(rec.note));
     }
+}
+
+void MainFrame::OnViewDetail(wxCommandEvent& event) {
+    // 1. 获取当前选中的列表项
+    long itemIndex = m_listCtrl->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+    if (itemIndex == -1) {
+        wxMessageBox(wxT("请先在列表中选择一条记录。"), wxT("提示"), wxOK | wxICON_INFORMATION);
+        return;
+    }
+
+    // 2. 根据ID找到完整的Record数据
+    int recordId = wxAtoi(m_listCtrl->GetItemText(itemIndex, 0));
+    const auto& data = m_dataManager.GetData();
+    auto it = std::find_if(data.begin(), data.end(), [recordId](const Record& r) { return r.id == recordId; });
+    if (it == data.end()) return;
+
+    // 3. 创建并设置弹窗
+    wxDialog detailDialog(this, wxID_ANY, wxT("账目详情"), wxDefaultPosition, wxSize(400, 300));
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    detailDialog.SetSizer(mainSizer);
+
+    // Create read-only text controls to display info, mimicking the original form layout
+    auto createInfoRow = [&](const wxString& label, const wxString& value) {
+        wxBoxSizer* row = new wxBoxSizer(wxHORIZONTAL);
+        row->Add(new wxStaticText(&detailDialog, wxID_ANY, label), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
+        wxTextCtrl* ctrl = new wxTextCtrl(&detailDialog, wxID_ANY, value, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+        row->Add(ctrl, 1);
+        mainSizer->Add(row, 0, wxEXPAND | wxALL, 5);
+    };
+
+    // Fill data
+    createInfoRow(wxT("日期:"), wxString::Format("%04d-%02d-%02d", it->year, it->month, it->day));
+    createInfoRow(wxT("项目:"), wxString::FromUTF8(it->name));
+    createInfoRow(wxT("类型:"), wxString::FromUTF8(it->type));
+    double amountToShow = static_cast<double>(it->amount) / 1000.0;
+    createInfoRow(wxT("金额(元):"), wxString::Format("%.2f", amountToShow));
+    createInfoRow(wxT("备注:"), wxString::FromUTF8(it->note));
+
+    // Add close button
+    wxButton* closeButton = new wxButton(&detailDialog, wxID_OK, wxT("关闭"));
+    mainSizer->Add(closeButton, 0, wxALIGN_CENTER | wxTOP | wxBOTTOM, 10);
+
+    // 4. Show the dialog
+    detailDialog.ShowModal();
 }

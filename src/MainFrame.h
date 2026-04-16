@@ -20,13 +20,6 @@ private:
     // Current displayed records (for sorting/searching)
     std::vector<Record> m_currentRecords;
 
-    // Input controls
-    wxDatePickerCtrl* m_datePicker;
-    wxTextCtrl* m_nameTextCtrl;
-    wxChoice* m_typeChoice;
-    wxTextCtrl* m_amountTextCtrl;
-    wxTextCtrl* m_noteTextCtrl;
-
     // Action buttons
     wxButton* m_addButton;
     wxButton* m_updateButton;
@@ -59,8 +52,9 @@ private:
     void OnSortByTypeDesc(wxCommandEvent& event);
     void OnSortByAmountDesc(wxCommandEvent& event);
 
+    // 新增：用于弹出详情窗口
+    void OnViewDetail(wxCommandEvent& event);
     void RefreshListCtrl();
-    void UpdateCurrentRecords();
 
     wxDECLARE_EVENT_TABLE();
 };

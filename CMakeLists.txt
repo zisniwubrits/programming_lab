@@ -18,7 +18,7 @@ list(APPEND SOURCES "resources/ProgrammingLab.rc")
 add_executable(ProgrammingLab ${SOURCES})
 
 # 链接标志（GUI 应用）
-# set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
 
 target_link_libraries(ProgrammingLab ${wxWidgets_LIBRARIES})
 target_include_directories(ProgrammingLab PRIVATE src)

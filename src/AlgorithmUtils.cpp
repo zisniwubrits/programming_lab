@@ -12,19 +12,19 @@ namespace AlgorithmUtils {
         
         for (const auto& record : records) {
             double amount = static_cast<double>(record.amount) / 1000.0;
-            std::printf(std::to_string(record.amount).c_str());
-            std::printf("\n");
+            // std::printf(std::to_string(record.amount).c_str());
+            // std::printf("\n");
             std::string type(record.type);
             
-            if (type == "收入") {
+            if (type == "\u6536\u5165") {
                 stats.totalIncome += amount;
-            } else if (type == "支出") {
+            } else if (type == "\u652f\u51fa") {
                 stats.totalExpense += amount;
             }
         }
         
         stats.netBalance = stats.totalIncome - stats.totalExpense;
-        std::printf(std::to_string(stats.netBalance).c_str());
+        // std::printf(std::to_string(stats.netBalance).c_str());
         return stats;
     }
     

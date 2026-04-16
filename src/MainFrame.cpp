@@ -356,7 +356,7 @@ void MainFrame::OnSearchByType(wxCommandEvent& event) {
         choices
     );
     if (selection != -1) {
-        std::string typeStr = (selection == 0) ? "Income" : "Expense";
+        std::string typeStr = (selection == 0) ? "\u6536\u5165" : "\u652f\u51fa";
         m_currentRecords = AlgorithmUtils::searchRecords(
             m_dataManager.GetData(),
             AlgorithmUtils::SearchField::TYPE,

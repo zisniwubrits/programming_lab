@@ -4,11 +4,48 @@
 #include <wx/clipbrd.h>
 #include <cstring>
 
+// Menu IDs
+enum {
+    ID_STATISTICS = 10000,
+    ID_SEARCH_NAME,
+    ID_SEARCH_TYPE,
+    ID_SEARCH_NOTE,
+    ID_SEARCH_DATE_RANGE,
+    ID_CLEAR_SEARCH,
+    ID_SORT_ID_ASC,
+    ID_SORT_DATE_ASC,
+    ID_SORT_NAME_ASC,
+    ID_SORT_TYPE_ASC,
+    ID_SORT_AMOUNT_ASC,
+    ID_SORT_ID_DESC,
+    ID_SORT_DATE_DESC,
+    ID_SORT_NAME_DESC,
+    ID_SORT_TYPE_DESC,
+    ID_SORT_AMOUNT_DESC
+};
+
 wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
     EVT_BUTTON(wxID_ADD, MainFrame::OnAddRecord)
     EVT_BUTTON(wxID_REPLACE, MainFrame::OnUpdateRecord)
     EVT_BUTTON(wxID_DELETE, MainFrame::OnDeleteRecord)
     EVT_LIST_ITEM_SELECTED(wxID_ANY, MainFrame::OnItemSelected)
+    // Menu events
+    EVT_MENU(ID_STATISTICS, MainFrame::OnStatistics)
+    EVT_MENU(ID_SEARCH_NAME, MainFrame::OnSearchByName)
+    EVT_MENU(ID_SEARCH_TYPE, MainFrame::OnSearchByType)
+    EVT_MENU(ID_SEARCH_NOTE, MainFrame::OnSearchByNote)
+    EVT_MENU(ID_SEARCH_DATE_RANGE, MainFrame::OnSearchByDateRange)
+    EVT_MENU(ID_CLEAR_SEARCH, MainFrame::OnClearSearch)
+    EVT_MENU(ID_SORT_ID_ASC, MainFrame::OnSortById)
+    EVT_MENU(ID_SORT_DATE_ASC, MainFrame::OnSortByDate)
+    EVT_MENU(ID_SORT_NAME_ASC, MainFrame::OnSortByName)
+    EVT_MENU(ID_SORT_TYPE_ASC, MainFrame::OnSortByType)
+    EVT_MENU(ID_SORT_AMOUNT_ASC, MainFrame::OnSortByAmount)
+    EVT_MENU(ID_SORT_ID_DESC, MainFrame::OnSortByIdDesc)
+    EVT_MENU(ID_SORT_DATE_DESC, MainFrame::OnSortByDateDesc)
+    EVT_MENU(ID_SORT_NAME_DESC, MainFrame::OnSortByNameDesc)
+    EVT_MENU(ID_SORT_TYPE_DESC, MainFrame::OnSortByTypeDesc)
+    EVT_MENU(ID_SORT_AMOUNT_DESC, MainFrame::OnSortByAmountDesc)
 wxEND_EVENT_TABLE()
 
 MainFrame::MainFrame(const wxString& title)
@@ -17,6 +54,47 @@ MainFrame::MainFrame(const wxString& title)
 
     // Load data
     m_dataManager.LoadData();
+    m_currentRecords = m_dataManager.GetData();
+
+    // Create menu bar
+    wxMenuBar* menuBar = new wxMenuBar();
+    
+    // Statistics menu
+    wxMenu* statisticsMenu = new wxMenu();
+    statisticsMenu->Append(ID_STATISTICS, wxT("显示统计信息\tCtrl+S"));
+    menuBar->Append(statisticsMenu, wxT("统计"));
+    
+    // Search menu
+    wxMenu* searchMenu = new wxMenu();
+    searchMenu->Append(ID_SEARCH_NAME, wxT("按项目名称查找\tCtrl+F"));
+    searchMenu->Append(ID_SEARCH_TYPE, wxT("按类型查找"));
+    searchMenu->Append(ID_SEARCH_NOTE, wxT("按备注查找"));
+    searchMenu->Append(ID_SEARCH_DATE_RANGE, wxT("按日期范围查找"));
+    searchMenu->AppendSeparator();
+    searchMenu->Append(ID_CLEAR_SEARCH, wxT("清除搜索结果\tEsc"));
+    menuBar->Append(searchMenu, wxT("查找"));
+    
+    // Sort menu
+    wxMenu* sortMenu = new wxMenu();
+    wxMenu* sortAscMenu = new wxMenu();
+    sortAscMenu->Append(ID_SORT_ID_ASC, wxT("按ID升序"));
+    sortAscMenu->Append(ID_SORT_DATE_ASC, wxT("按日期升序"));
+    sortAscMenu->Append(ID_SORT_NAME_ASC, wxT("按项目升序"));
+    sortAscMenu->Append(ID_SORT_TYPE_ASC, wxT("按类型升序"));
+    sortAscMenu->Append(ID_SORT_AMOUNT_ASC, wxT("按金额升序"));
+    
+    wxMenu* sortDescMenu = new wxMenu();
+    sortDescMenu->Append(ID_SORT_ID_DESC, wxT("按ID降序"));
+    sortDescMenu->Append(ID_SORT_DATE_DESC, wxT("按日期降序"));
+    sortDescMenu->Append(ID_SORT_NAME_DESC, wxT("按项目降序"));
+    sortDescMenu->Append(ID_SORT_TYPE_DESC, wxT("按类型降序"));
+    sortDescMenu->Append(ID_SORT_AMOUNT_DESC, wxT("按金额降序"));
+    
+    sortMenu->AppendSubMenu(sortAscMenu, wxT("升序排列"));
+    sortMenu->AppendSubMenu(sortDescMenu, wxT("降序排列"));
+    menuBar->Append(sortMenu, wxT("排序"));
+    
+    SetMenuBar(menuBar);
 
     // Create main panel and top-level sizer
     wxPanel* mainPanel = new wxPanel(this);
@@ -92,7 +170,7 @@ MainFrame::MainFrame(const wxString& title)
     this->SetMinSize(wxSize(700, 500));
 }
 
-// --- Event Handlers ---
+// --- Original Event Handlers ---
 
 void MainFrame::OnAddRecord(wxCommandEvent& event) {
     Record newRecord;
@@ -138,8 +216,9 @@ void MainFrame::OnAddRecord(wxCommandEvent& event) {
     auto& data = m_dataManager.GetData();
     data.push_back(newRecord);
     m_dataManager.SaveData();
-
-    // Refresh UI and clear inputs
+    
+    // Update current records and refresh UI
+    m_currentRecords = m_dataManager.GetData();
     RefreshListCtrl();
     m_nameTextCtrl->Clear();
     m_amountTextCtrl->Clear();
@@ -191,6 +270,7 @@ void MainFrame::OnUpdateRecord(wxCommandEvent& event) {
 
     // Save and refresh
     m_dataManager.SaveData();
+    m_currentRecords = m_dataManager.GetData();
     RefreshListCtrl();
 }
 
@@ -212,6 +292,7 @@ void MainFrame::OnDeleteRecord(wxCommandEvent& event) {
     data.erase(std::remove_if(data.begin(), data.end(), [recordId](const Record& r) { return r.id == recordId; }), data.end());
 
     m_dataManager.SaveData();
+    m_currentRecords = m_dataManager.GetData();
     RefreshListCtrl();
 }
 
@@ -234,14 +315,225 @@ void MainFrame::OnItemSelected(wxListEvent& event) {
     m_noteTextCtrl->SetValue(wxString::FromUTF8(it->note));
 }
 
-// --- Helper Function ---
+// --- Menu Event Handlers ---
+
+void MainFrame::OnStatistics(wxCommandEvent& event) {
+    auto stats = AlgorithmUtils::calculateStatistics(m_dataManager.GetData());
+    wxString message = wxString::Format(
+        wxT("统计信息:\n\n")
+        wxT("总收入: %.2f 元\n")
+        wxT("总支出: %.2f 元\n")
+        wxT("净余额: %.2f 元\n")
+        wxT("记录总数: %zu 条"),
+        stats.totalIncome,
+        stats.totalExpense,
+        stats.netBalance,
+        stats.recordCount
+    );
+    wxMessageBox(message, wxT("统计信息"), wxOK | wxICON_INFORMATION);
+}
+
+void MainFrame::OnSearchByName(wxCommandEvent& event) {
+    wxString keyword = wxGetTextFromUser(wxT("请输入要查找的项目名称:"), wxT("查找项目"));
+    if (!keyword.IsEmpty()) {
+        std::string utf8Keyword = keyword.ToUTF8().data();
+        m_currentRecords = AlgorithmUtils::searchRecords(
+            m_dataManager.GetData(),
+            AlgorithmUtils::SearchField::NAME,
+            utf8Keyword
+        );
+        RefreshListCtrl();
+    }
+}
+
+void MainFrame::OnSearchByType(wxCommandEvent& event) {
+    wxArrayString choices;
+    choices.Add(wxT("收入"));
+    choices.Add(wxT("支出"));
+    int selection = wxGetSingleChoiceIndex(
+        wxT("请选择要查找的类型:"),
+        wxT("查找类型"),
+        choices
+    );
+    if (selection != -1) {
+        std::string typeStr = (selection == 0) ? "Income" : "Expense";
+        m_currentRecords = AlgorithmUtils::searchRecords(
+            m_dataManager.GetData(),
+            AlgorithmUtils::SearchField::TYPE,
+            typeStr
+        );
+        RefreshListCtrl();
+    }
+}
+
+void MainFrame::OnSearchByNote(wxCommandEvent& event) {
+    wxString keyword = wxGetTextFromUser(wxT("请输入要查找的备注关键词:"), wxT("查找备注"));
+    if (!keyword.IsEmpty()) {
+        std::string utf8Keyword = keyword.ToUTF8().data();
+        m_currentRecords = AlgorithmUtils::searchRecords(
+            m_dataManager.GetData(),
+            AlgorithmUtils::SearchField::NOTE,
+            utf8Keyword
+        );
+        RefreshListCtrl();
+    }
+}
+
+void MainFrame::OnSearchByDateRange(wxCommandEvent& event) {
+    auto parseDate = [](const wxString& str, wxDateTime& dt) -> bool {
+        int y, m, d;
+        if (std::sscanf(str.ToUTF8().data(), "%d-%d-%d", &y, &m, &d) != 3)
+            return false;
+        dt.Set(d, wxDateTime::Month(m - 1), y);
+        return dt.IsValid() && m >= 1 && m <= 12 && d >= 1 && d <= 31;
+    };
+
+    wxString startStr = wxGetTextFromUser(
+        wxT("请输入开始日期（格式：YYYY-MM-DD）："),
+        wxT("日期范围查找 - 开始")
+    );
+    if (startStr.empty()) return;
+
+    wxString endStr = wxGetTextFromUser(
+        wxT("请输入结束日期（格式：YYYY-MM-DD）："),
+        wxT("日期范围查找 - 结束")
+    );
+    if (endStr.empty()) return;
+
+    wxDateTime startDate, endDate;
+    if (!parseDate(startStr, startDate)) {
+        wxMessageBox(wxT("开始日期格式无效！请使用 YYYY-MM-DD 格式。"), wxT("错误"), wxOK | wxICON_ERROR);
+        return;
+    }
+    if (!parseDate(endStr, endDate)) {
+        wxMessageBox(wxT("结束日期格式无效！请使用 YYYY-MM-DD 格式。"), wxT("错误"), wxOK | wxICON_ERROR);
+        return;
+    }
+
+    if (endDate < startDate) {
+        wxMessageBox(wxT("结束日期不能早于开始日期！"), wxT("错误"), wxOK | wxICON_ERROR);
+        return;
+    }
+
+    AlgorithmUtils::DateRange range;
+    range.startYear = startDate.GetYear();
+    range.startMonth = startDate.GetMonth() + 1;
+    range.startDay = startDate.GetDay();
+    range.endYear = endDate.GetYear();
+    range.endMonth = endDate.GetMonth() + 1;
+    range.endDay = endDate.GetDay();
+
+    m_currentRecords = AlgorithmUtils::searchRecords(
+        m_dataManager.GetData(),
+        AlgorithmUtils::SearchField::DATE_RANGE,
+        "",
+        &range
+    );
+    RefreshListCtrl();
+}
+
+void MainFrame::OnClearSearch(wxCommandEvent& event) {
+    m_currentRecords = m_dataManager.GetData();
+    RefreshListCtrl();
+}
+
+void MainFrame::OnSortById(wxCommandEvent& event) {
+    m_currentRecords = AlgorithmUtils::sortRecords(
+        m_currentRecords,
+        AlgorithmUtils::SortField::ID,
+        AlgorithmUtils::SortOrder::ASCENDING
+    );
+    RefreshListCtrl();
+}
+
+void MainFrame::OnSortByDate(wxCommandEvent& event) {
+    m_currentRecords = AlgorithmUtils::sortRecords(
+        m_currentRecords,
+        AlgorithmUtils::SortField::DATE,
+        AlgorithmUtils::SortOrder::ASCENDING
+    );
+    RefreshListCtrl();
+}
+
+void MainFrame::OnSortByName(wxCommandEvent& event) {
+    m_currentRecords = AlgorithmUtils::sortRecords(
+        m_currentRecords,
+        AlgorithmUtils::SortField::NAME,
+        AlgorithmUtils::SortOrder::ASCENDING
+    );
+    RefreshListCtrl();
+}
+
+void MainFrame::OnSortByType(wxCommandEvent& event) {
+    m_currentRecords = AlgorithmUtils::sortRecords(
+        m_currentRecords,
+        AlgorithmUtils::SortField::TYPE,
+        AlgorithmUtils::SortOrder::ASCENDING
+    );
+    RefreshListCtrl();
+}
+
+void MainFrame::OnSortByAmount(wxCommandEvent& event) {
+    m_currentRecords = AlgorithmUtils::sortRecords(
+        m_currentRecords,
+        AlgorithmUtils::SortField::AMOUNT,
+        AlgorithmUtils::SortOrder::ASCENDING
+    );
+    RefreshListCtrl();
+}
+
+void MainFrame::OnSortByIdDesc(wxCommandEvent& event) {
+    m_currentRecords = AlgorithmUtils::sortRecords(
+        m_currentRecords,
+        AlgorithmUtils::SortField::ID,
+        AlgorithmUtils::SortOrder::DESCENDING
+    );
+    RefreshListCtrl();
+}
+
+void MainFrame::OnSortByDateDesc(wxCommandEvent& event) {
+    m_currentRecords = AlgorithmUtils::sortRecords(
+        m_currentRecords,
+        AlgorithmUtils::SortField::DATE,
+        AlgorithmUtils::SortOrder::DESCENDING
+    );
+    RefreshListCtrl();
+}
+
+void MainFrame::OnSortByNameDesc(wxCommandEvent& event) {
+    m_currentRecords = AlgorithmUtils::sortRecords(
+        m_currentRecords,
+        AlgorithmUtils::SortField::NAME,
+        AlgorithmUtils::SortOrder::DESCENDING
+    );
+    RefreshListCtrl();
+}
+
+void MainFrame::OnSortByTypeDesc(wxCommandEvent& event) {
+    m_currentRecords = AlgorithmUtils::sortRecords(
+        m_currentRecords,
+        AlgorithmUtils::SortField::TYPE,
+        AlgorithmUtils::SortOrder::DESCENDING
+    );
+    RefreshListCtrl();
+}
+
+void MainFrame::OnSortByAmountDesc(wxCommandEvent& event) {
+    m_currentRecords = AlgorithmUtils::sortRecords(
+        m_currentRecords,
+        AlgorithmUtils::SortField::AMOUNT,
+        AlgorithmUtils::SortOrder::DESCENDING
+    );
+    RefreshListCtrl();
+}
+
+// --- Helper Functions ---
 
 void MainFrame::RefreshListCtrl() {
     m_listCtrl->DeleteAllItems();
-    const auto& data = m_dataManager.GetData();
-
-    for (size_t i = 0; i < data.size(); ++i) {
-        const Record& rec = data[i];
+    
+    for (size_t i = 0; i < m_currentRecords.size(); ++i) {
+        const Record& rec = m_currentRecords[i];
         long index = m_listCtrl->InsertItem(i, wxString::Format("%d", rec.id));
         
         // Format date

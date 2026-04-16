@@ -6,6 +6,7 @@
 #include <wx/datectrl.h>
 #include <wx/listctrl.h>
 #include "DataManager.h"
+#include "AlgorithmUtils.h"
 
 class MainFrame : public wxFrame
 {
@@ -15,6 +16,9 @@ public:
 private:
     // Data model
     DataManager m_dataManager;
+    
+    // Current displayed records (for sorting/searching)
+    std::vector<Record> m_currentRecords;
 
     // Input controls
     wxDatePickerCtrl* m_datePicker;
@@ -36,8 +40,27 @@ private:
     void OnUpdateRecord(wxCommandEvent& event);
     void OnDeleteRecord(wxCommandEvent& event);
     void OnItemSelected(wxListEvent& event);
+    
+    // Menu event handlers
+    void OnStatistics(wxCommandEvent& event);
+    void OnSearchByName(wxCommandEvent& event);
+    void OnSearchByType(wxCommandEvent& event);
+    void OnSearchByNote(wxCommandEvent& event);
+    void OnSearchByDateRange(wxCommandEvent& event);
+    void OnClearSearch(wxCommandEvent& event);
+    void OnSortById(wxCommandEvent& event);
+    void OnSortByDate(wxCommandEvent& event);
+    void OnSortByName(wxCommandEvent& event);
+    void OnSortByType(wxCommandEvent& event);
+    void OnSortByAmount(wxCommandEvent& event);
+    void OnSortByIdDesc(wxCommandEvent& event);
+    void OnSortByDateDesc(wxCommandEvent& event);
+    void OnSortByNameDesc(wxCommandEvent& event);
+    void OnSortByTypeDesc(wxCommandEvent& event);
+    void OnSortByAmountDesc(wxCommandEvent& event);
 
     void RefreshListCtrl();
+    void UpdateCurrentRecords();
 
     wxDECLARE_EVENT_TABLE();
 };

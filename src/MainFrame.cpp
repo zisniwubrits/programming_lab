@@ -337,11 +337,12 @@ void MainFrame::OnSearchByName(wxCommandEvent& event) {
     wxString keyword = wxGetTextFromUser(wxT("请输入要查找的项目名称:"), wxT("查找项目"));
     if (!keyword.IsEmpty()) {
         std::string utf8Keyword = keyword.ToUTF8().data();
-        m_currentRecords = AlgorithmUtils::searchRecords(
-            m_dataManager.GetData(),
+        auto filtered = AlgorithmUtils::searchRecords(
+            m_currentRecords,
             AlgorithmUtils::SearchField::NAME,
             utf8Keyword
         );
+        m_currentRecords = std::move(filtered);
         RefreshListCtrl();
     }
 }
@@ -357,11 +358,12 @@ void MainFrame::OnSearchByType(wxCommandEvent& event) {
     );
     if (selection != -1) {
         std::string typeStr = (selection == 0) ? "\u6536\u5165" : "\u652f\u51fa";
-        m_currentRecords = AlgorithmUtils::searchRecords(
-            m_dataManager.GetData(),
+        auto filtered = AlgorithmUtils::searchRecords(
+            m_currentRecords,
             AlgorithmUtils::SearchField::TYPE,
             typeStr
         );
+        m_currentRecords = std::move(filtered);
         RefreshListCtrl();
     }
 }
@@ -370,11 +372,12 @@ void MainFrame::OnSearchByNote(wxCommandEvent& event) {
     wxString keyword = wxGetTextFromUser(wxT("请输入要查找的备注关键词:"), wxT("查找备注"));
     if (!keyword.IsEmpty()) {
         std::string utf8Keyword = keyword.ToUTF8().data();
-        m_currentRecords = AlgorithmUtils::searchRecords(
-            m_dataManager.GetData(),
+        auto filtered = AlgorithmUtils::searchRecords(
+            m_currentRecords,
             AlgorithmUtils::SearchField::NOTE,
             utf8Keyword
         );
+        m_currentRecords = std::move(filtered);
         RefreshListCtrl();
     }
 }
@@ -423,12 +426,13 @@ void MainFrame::OnSearchByDateRange(wxCommandEvent& event) {
     range.endMonth = endDate.GetMonth() + 1;
     range.endDay = endDate.GetDay();
 
-    m_currentRecords = AlgorithmUtils::searchRecords(
-        m_dataManager.GetData(),
+    auto filtered = AlgorithmUtils::searchRecords(
+        m_currentRecords,
         AlgorithmUtils::SearchField::DATE_RANGE,
         "",
         &range
     );
+    m_currentRecords = std::move(filtered);
     RefreshListCtrl();
 }
 

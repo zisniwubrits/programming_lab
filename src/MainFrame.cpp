@@ -136,7 +136,6 @@ MainFrame::MainFrame(const wxString& title)
 }
 
 // --- Original Event Handlers ---
-
 void MainFrame::OnAddRecord(wxCommandEvent& event) {
     // Create a dialog for adding a new record
     wxDialog addDialog(this, wxID_ANY, wxT("添加新记录"), wxDefaultPosition, wxSize(400, 300));
@@ -154,7 +153,11 @@ void MainFrame::OnAddRecord(wxCommandEvent& event) {
     wxBoxSizer* dateRow = new wxBoxSizer(wxHORIZONTAL);
     dateRow->Add(new wxStaticText(&addDialog, wxID_ANY, wxT("日期:")), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
     dateTextCtrl = new wxTextCtrl(&addDialog, wxID_ANY, "", wxDefaultPosition, wxSize(100, -1));
-    dateTextCtrl->SetHint("YYYY-MM-DD"); // Add format hint
+    dateTextCtrl->SetHint("YYYY-MM-DD"); // Add format hint    
+    // --- Add default date (today) ---
+    wxDateTime today = wxDateTime::Now();
+    dateTextCtrl->SetValue(today.Format("%Y-%m-%d"));
+    
     dateRow->Add(dateTextCtrl, 1);
     mainSizer->Add(dateRow, 0, wxEXPAND | wxALL, 5);
 
@@ -670,26 +673,41 @@ void MainFrame::OnViewDetail(wxCommandEvent& event) {
     if (it == data.end()) return;
 
     // 3. 创建并设置弹窗
-    wxDialog detailDialog(this, wxID_ANY, wxT("账目详情"), wxDefaultPosition, wxSize(400, 300));
+    wxDialog detailDialog(this, wxID_ANY, wxT("账目详情"), wxDefaultPosition, wxSize(400, 350)); // 稍微增加高度
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     detailDialog.SetSizer(mainSizer);
 
-    // Create read-only text controls to display info, mimicking the original form layout
+    // 普通信息行（单行）
     auto createInfoRow = [&](const wxString& label, const wxString& value) {
         wxBoxSizer* row = new wxBoxSizer(wxHORIZONTAL);
         row->Add(new wxStaticText(&detailDialog, wxID_ANY, label), 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
         wxTextCtrl* ctrl = new wxTextCtrl(&detailDialog, wxID_ANY, value, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
-        row->Add(ctrl, 1);
+        row->Add(ctrl, 1, wxEXPAND);
         mainSizer->Add(row, 0, wxEXPAND | wxALL, 5);
     };
 
-    // Fill data
+    // Fill standard fields
     createInfoRow(wxT("日期:"), wxString::Format("%04d-%02d-%02d", it->year, it->month, it->day));
     createInfoRow(wxT("项目:"), wxString::FromUTF8(it->name));
     createInfoRow(wxT("类型:"), wxString::FromUTF8(it->type));
     double amountToShow = static_cast<double>(it->amount) / 1000.0;
     createInfoRow(wxT("金额(元):"), wxString::Format("%.2f", amountToShow));
-    createInfoRow(wxT("备注:"), wxString::FromUTF8(it->note));
+
+    // 特殊处理：备注（多行）
+    {
+        wxBoxSizer* noteRow = new wxBoxSizer(wxHORIZONTAL);
+        noteRow->Add(new wxStaticText(&detailDialog, wxID_ANY, wxT("备注:")), 0, wxALIGN_TOP | wxRIGHT | wxTOP, 5);
+        wxTextCtrl* noteCtrl = new wxTextCtrl(
+            &detailDialog, 
+            wxID_ANY, 
+            wxString::FromUTF8(it->note), 
+            wxDefaultPosition, 
+            wxSize(-1, 80), // 固定高度以显示多行
+            wxTE_MULTILINE | wxTE_READONLY | wxTE_RICH
+        );
+        noteRow->Add(noteCtrl, 1, wxEXPAND);
+        mainSizer->Add(noteRow, 0, wxEXPAND | wxALL, 5);
+    }
 
     // Add close button
     wxButton* closeButton = new wxButton(&detailDialog, wxID_OK, wxT("关闭"));

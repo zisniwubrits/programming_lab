@@ -485,10 +485,17 @@ void MainFrame::OnSearchByNote(wxCommandEvent& event) {
 void MainFrame::OnSearchByDateRange(wxCommandEvent& event) {
     auto parseDate = [](const wxString& str, wxDateTime& dt) -> bool {
         int y, m, d;
+        // 先解析字符串
         if (std::sscanf(str.ToUTF8().data(), "%d-%d-%d", &y, &m, &d) != 3)
             return false;
+        
+        // 严格校验范围（避免非法 Month 枚举）
+        if (y < 1 || m < 1 || m > 12 || d < 1 || d > 31)
+            return false;
+        
+        // 此时 m-1 必在 [0,11] 范围内，安全调用 Set
         dt.Set(d, wxDateTime::Month(m - 1), y);
-        return dt.IsValid() && m >= 1 && m <= 12 && d >= 1 && d <= 31;
+        return dt.IsValid(); // 再检查日期逻辑有效性（如 2月30日）
     };
 
     wxString startStr = wxGetTextFromUser(

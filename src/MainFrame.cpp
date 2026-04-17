@@ -1,4 +1,4 @@
-﻿// MainFrame.cpp
+// MainFrame.cpp
 #include "MainFrame.h"
 #include <wx/sizer.h>
 #include <wx/clipbrd.h>
